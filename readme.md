@@ -1,25 +1,25 @@
 ![CI](https://github.com/bucanero/ps3toolchain/workflows/CI/badge.svg) [![License](https://img.shields.io/github/license/bucanero/ps3toolchain.svg)](./LICENSE)
 
-  What does this do?
- ====================
+   O que isso faz?
+  ======================
 
-  This program will automatically build and install a compiler and other
-  tools used in the creation of homebrew software for the Sony Playstation 3
-  videogame system.
+   Este programa criará e instalará automaticamente um compilador e outros
+   ferramentas utilizadas na criação do software homebrew para o Sony Playstation 3.
 
-  How do I use it?
- ==================
+   Como eu uso isso?
+  ==================
+ 
 
- 1) Set up your environment by installing the following software:
+1) Configure seu ambiente instalando o seguinte software:
 
-  autoconf, automake, bison, flex, gcc, libelf, make, makeinfo,
-  ncurses, patch, python, subversion, wget, zlib, libtool, python,
-  bzip2, gmp, pkg-config, g++, libssl-dev, clang
+   autoconf, automake, bison, flex, gcc, libelf, make, makeinfo,
+   ncurses, patch, python, subversion, wget, zlib, libtool, python,
+   bzip2, gmp, pkg-config, g++, libssl-dev, clang
 
 ## Linux
 
-  Specifically on debian-based systems, the following command line should
-  be enough to install everything necessary:
+  Especificamente em sistemas baseados em Debian, a seguinte linha de comando deve
+  ser suficiente para instalar tudo o que for necessário:
 
 ```bash
   apt-get install autoconf automake bison flex gcc libelf-dev make \
@@ -29,14 +29,15 @@
 
 ## macOS
 
-  On macOS systems, if you have [Homebrew](http://brew.sh) package manager, the following command line should
-  be enough to install everything necessary:
+  Em sistemas macOS, se você tiver o gerenciador de pacotes [Homebrew](http://brew.sh), a seguinte linha de comando deve
+  ser suficiente para instalar tudo o que for necessário:
 
 ```bash
 brew install autoconf automake openssl libelf ncurses zlib gmp wget pkg-config
 ```
 
- 2) Add the following to your login script:
+ 2) Adicione o seguinte ao seu script de login:
+    
 ```bash
   export PS3DEV=/usr/local/ps3dev
   export PSL1GHT=$PS3DEV
@@ -46,7 +47,7 @@ brew install autoconf automake openssl libelf ncurses zlib gmp wget pkg-config
   export PATH=$PATH:$PS3DEV/spu/bin
 ```
 
- 3) Run the toolchain script:
+ 3) Execute o script toolchain:
 ```bash
   ./toolchain.sh
 ```
