@@ -23,8 +23,8 @@
 
 ```bash
   apt-get install autoconf automake bison flex gcc libelf-dev make \
-    texinfo libncurses5-dev patch python subversion wget zlib1g-dev \
-    libtool libtool-bin python-dev bzip2 libgmp3-dev pkg-config g++ libssl-dev clang
+    texinfo libncurses5-dev patch python3 subversion wget zlib1g-dev \
+    libtool libtool-bin python3-dev bzip2 libgmp3-dev pkg-config g++ libssl-dev clang
 ```
 
 ## macOS
