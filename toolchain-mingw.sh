@@ -139,7 +139,7 @@ INSTALL_PACKAGES=
 
 	## Install libelf
 	if [ ! -f /mingw/include/libelf.h ]; then 
-		wget http://www.mr511.de/software/libelf-0.8.13.tar.gz
+		wget https://fossies.org/linux/misc/old/libelf-0.8.13.tar.gz
 		tar -zxvf libelf-0.8.13.tar.gz
 		cd libelf-0.8.13
 		./configure --prefix="/mingw"
