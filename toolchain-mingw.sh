@@ -137,7 +137,7 @@ INSTALL_PACKAGES=
 	## Create the build directory.
 	mkdir -p build && cd build || { echo "ERROR: Could not create the build directory."; exit 1; }
 
-	## Install libelf
+	## Install libelf new
 	if [ ! -f /mingw/include/libelf.h ]; then 
 		wget https://fossies.org/linux/misc/old/libelf-0.8.13.tar.gz
 		tar -zxvf libelf-0.8.13.tar.gz
