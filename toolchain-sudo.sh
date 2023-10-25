@@ -13,5 +13,8 @@ export PATH=$PATH:$PS3DEV/bin
 export PATH=$PATH:$PS3DEV/ppu/bin
 export PATH=$PATH:$PS3DEV/spu/bin
 
+## Troque para o IP do Seu PS3
+export PS3LOAD=tcp:192.168.100.76
+
 ## Run the toolchain script.
 ./toolchain.sh $@ || { echo "ERROR: Could not run the toolchain script."; exit 1; }
