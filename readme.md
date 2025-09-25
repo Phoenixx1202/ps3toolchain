@@ -51,18 +51,12 @@ nano ~/.bashrc
   export PATH=$PATH:$PS3DEV/spu/bin
 ```
 
- 4) Reinicie o 
+ 4) Reinicie o ~/.bashrc
 
 ```bash
 source ~/.bashrc
 
 ```   
-
-
-  
-
-
-
     
 
 
