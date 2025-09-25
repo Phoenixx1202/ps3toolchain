@@ -35,9 +35,13 @@
 ```bash
 brew install autoconf automake openssl libelf ncurses zlib gmp wget pkg-config
 ```
+ 2) Edite o arquivo ~/.bashrc
+ ```bash
+nano ~/.bashrc
+```
 
- 2) Adicione o seguinte ao seu script de login:
-    
+ 3) Adicione as variáveis juntamente com o seu local de instalação no arquivo ~/.bashrc (Debian/Ubuntu):
+
 ```bash
   export PS3DEV=/usr/local/ps3dev
   export PSL1GHT=$PS3DEV
@@ -46,6 +50,21 @@ brew install autoconf automake openssl libelf ncurses zlib gmp wget pkg-config
   export PATH=$PATH:$PS3DEV/ppu/bin
   export PATH=$PATH:$PS3DEV/spu/bin
 ```
+
+ 4) Reinicie o 
+
+```bash
+source ~/.bashrc
+
+```   
+
+
+  
+
+
+
+    
+
 
  3) Execute o script toolchain:
 ```bash
