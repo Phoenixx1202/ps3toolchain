@@ -1,29 +1,29 @@
 #!/bin/sh -e
 # gcc-newlib-SPU.sh by Naomi Peori (naomi@peori.ca)
 
-GCC="gcc-7.2.0"
-NEWLIB="newlib-1.20.0"
+GCC="gcc-7.5.0"
+NEWLIB="4.5.0.20241231"
 
-if [ ! -d ${GCC} ]; then
+if [ ! -d "${GCC}-SPU" ]; then
 
   ## Download the source code.
   if [ ! -f ${GCC}.tar.xz ]; then wget --continue https://mirrors.ibiblio.org/gnu/gcc/${GCC}/${GCC}.tar.xz; fi
-  if [ ! -f ${NEWLIB}.tar.gz ]; then wget --continue https://sourceware.org/pub/newlib/${NEWLIB}.tar.gz; fi
+  if [ ! -f newlib-${NEWLIB}.tar.gz ]; then wget --continue https://sourceware.org/pub/newlib/newlib-${NEWLIB}.tar.gz; fi
 
   ## Unpack the source code.
-  rm -Rf ${GCC} && tar xfvJ ${GCC}.tar.xz
-  rm -Rf ${NEWLIB} && tar xfvz ${NEWLIB}.tar.gz
+  rm -Rf ${GCC}-tmp && mkdir -p ${GCC}-tmp && tar xfJ ${GCC}.tar.xz -C ${GCC}-tmp && mv ${GCC}-tmp/${GCC} ${GCC}-SPU && rm -Rf ${GCC}-tmp
+  rm -Rf newlib-ps3-${NEWLIB} && tar xfz newlib-${NEWLIB}.tar.gz
 
   ## Patch the source code.
-  cat ../patches/${GCC}-PS3.patch | patch -p1 -d ${GCC}
-  cat ../patches/${NEWLIB}-PS3.patch | patch -p1 -d ${NEWLIB}
+  cat ../patches/${GCC}-PS3.patch | patch -p1 -d ${GCC}-SPU
+  cat ../patches/newlib-${NEWLIB}-PS3.patch | patch -p1 -d newlib-${NEWLIB}
 
   ## Enter the source code directory.
-  cd ${GCC}
+  cd ${GCC}-SPU
 
   ## Create the newlib symlinks.
-  ln -s ../${NEWLIB}/newlib newlib
-  ln -s ../${NEWLIB}/libgloss libgloss
+  ln -s ../newlib-${NEWLIB}/newlib newlib
+  ln -s ../newlib-${NEWLIB}/libgloss libgloss
 
   ## Download the prerequisites.
   ./contrib/download_prerequisites
@@ -33,17 +33,18 @@ if [ ! -d ${GCC} ]; then
 
 fi
 
-if [ ! -d ${GCC}/build-spu ]; then
+if [ ! -d ${GCC}-SPU/build-spu ]; then
 
   ## Create the build directory.
-  mkdir ${GCC}/build-spu
+  mkdir ${GCC}-SPU/build-spu
 
 fi
 
 ## Enter the build directory.
-cd ${GCC}/build-spu
+cd ${GCC}-SPU/build-spu
 
 ## Configure the build.
+CFLAGS_FOR_TARGET="-Os -fpic -ffast-math -ftree-vectorize -funroll-loops -fschedule-insns -mdual-nops -mwarn-reloc" \
 ../configure --prefix="$PS3DEV/spu" --target="spu" \
     --disable-dependency-tracking \
     --disable-libcc1 \
@@ -55,9 +56,11 @@ cd ${GCC}/build-spu
     --enable-languages="c,c++" \
     --enable-lto \
     --enable-threads \
-    --with-newlib
+    --with-newlib \
+    --enable-newlib-multithread \
+    --with-pic
 
 ## Compile and install.
-PROCS="$(nproc --all 2>&1)" || ret=$?
-if [ ! -z $ret ]; then PROCS=4; fi
+PROCS="$(grep -c '^processor' /proc/cpuinfo 2>/dev/null)" || ret=$?
+if [ ! -z $ret ]; then PROCS="$(sysctl -n hw.ncpu 2>/dev/null)"; fi
 ${MAKE:-make} -j $PROCS all && ${MAKE:-make} install
