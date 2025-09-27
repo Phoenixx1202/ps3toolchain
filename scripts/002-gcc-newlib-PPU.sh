@@ -1,29 +1,29 @@
 #!/bin/sh -e
 # gcc-newlib-PPU.sh by Naomi Peori (naomi@peori.ca)
 
-GCC="gcc-7.2.0"
-NEWLIB="newlib-1.20.0"
+GCC="gcc-7.5.0"
+NEWLIB="4.4.0.20241231"
 
 if [ ! -d ${GCC} ]; then
 
   ## Download the source code.
   if [ ! -f ${GCC}.tar.xz ]; then wget --continue https://mirrors.ibiblio.org/gnu/gcc/${GCC}/${GCC}.tar.xz; fi
-  if [ ! -f ${NEWLIB}.tar.gz ]; then wget --continue https://sourceware.org/pub/newlib/${NEWLIB}.tar.gz; fi
+  if [ ! -f ${NEWLIB}.tar.gz ]; then wget --continue https://sourceware.org/pub/newlib/newlib-${NEWLIB}.tar.gz; fi
 
   ## Unpack the source code.
-  rm -Rf ${GCC} && tar xfvJ ${GCC}.tar.xz
-  rm -Rf ${NEWLIB} && tar xfvz ${NEWLIB}.tar.gz
+  rm -Rf ${GCC} && tar xfJ ${GCC}.tar.xz
+  rm -Rf newlib-${NEWLIB} && tar xfz newlib-${NEWLIB}.tar.gz
 
   ## Patch the source code.
   cat ../patches/${GCC}-PS3.patch | patch -p1 -d ${GCC}
-  cat ../patches/${NEWLIB}-PS3.patch | patch -p1 -d ${NEWLIB}
+  cat ../patches/newlib-${NEWLIB}-PS3-PPU.patch | patch -p1 -d newlib-${NEWLIB}
 
   ## Enter the source code directory.
   cd ${GCC}
 
   ## Create the newlib symlinks.
-  ln -s ../${NEWLIB}/newlib newlib
-  ln -s ../${NEWLIB}/libgloss libgloss
+  ln -s ../newlib-${NEWLIB}/newlib newlib
+  ln -s ../newlib-${NEWLIB}/libgloss libgloss
 
   ## Download the prerequisites.
   ./contrib/download_prerequisites
@@ -58,9 +58,10 @@ cd ${GCC}/build-ppu
     --enable-threads \
     --with-cpu="cell" \
     --with-newlib \
+    --enable-newlib-multithread \
     --with-system-zlib
 
 ## Compile and install.
-PROCS="$(nproc --all 2>&1)" || ret=$?
-if [ ! -z $ret ]; then PROCS=4; fi
+PROCS="$(grep -c '^processor' /proc/cpuinfo 2>/dev/null)" || ret=$?
+if [ ! -z $ret ]; then PROCS="$(sysctl -n hw.ncpu 2>/dev/null)"; fi
 ${MAKE:-make} -j $PROCS all && ${MAKE:-make} install
