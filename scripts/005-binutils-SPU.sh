@@ -9,14 +9,14 @@ if [ ! -d ${BINUTILS} ]; then
   if [ ! -f ${BINUTILS}.tar.bz2 ]; then wget --continue https://ftp.wayne.edu/gnu/binutils/${BINUTILS}.tar.bz2; fi
 
   ## Download an up-to-date config.guess and config.sub
-  if [ ! -f config.guess ]; then wget --continue http://git.savannah.gnu.org/cgit/config.git/plain/config.guess; fi
-  if [ ! -f config.sub ]; then wget --continue http://git.savannah.gnu.org/cgit/config.git/plain/config.sub; fi
+  if [ ! -f config.guess ]; then wget --continue https://cgit.git.savannah.gnu.org/cgit/config.git/plain/config.guess; fi
+  if [ ! -f config.sub ]; then wget --continue https://cgit.git.savannah.gnu.org/cgit/config.git/plain/config.sub; fi
 
   ## Unpack the source code.
-  tar xfvj ${BINUTILS}.tar.bz2
+  tar xfj ${BINUTILS}.tar.bz2
 
   ## Patch the source code.
-  cat ../patches/${BINUTILS}-PS3.patch | patch -p1 -d ${BINUTILS}
+  cat ../patches/${BINUTILS}-PS3-SPU.patch | patch -p1 -d ${BINUTILS}
 
   ## Replace config.guess and config.sub
   cp config.guess config.sub ${BINUTILS}
@@ -45,6 +45,6 @@ cd ${BINUTILS}/build-spu
     --with-gnu-ld
 
 ## Compile and install.
-PROCS="$(nproc --all 2>&1)" || ret=$?
-if [ ! -z $ret ]; then PROCS=4; fi
-${MAKE:-make} -j $PROCS && ${MAKE:-make} libdir=host-libs/lib install
+PROCS="$(grep -c '^processor' /proc/cpuinfo 2>/dev/null)" || ret=$?
+if [ ! -z $ret ]; then PROCS="$(sysctl -n hw.ncpu 2>/dev/null)"; fi
+${MAKE:-make} -j $PROCS && ${MAKE:-make} libdir=$(pwd)/host-libs/lib install
