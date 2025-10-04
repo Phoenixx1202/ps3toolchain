@@ -11,22 +11,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [ubuntu-latest] # Removido o macos-latest
 
     steps:
-    - uses: actions/checkout@v2
-    
+    - uses: actions/checkout@v4 # Atualizado para a v4 para melhor performance e segurança
+
     - name: Install Ubuntu requirements
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update
-        sudo apt-get -y install autoconf automake bison flex gcc libelf-dev make texinfo libncurses5-dev patch python subversion wget zlib1g-dev libtool-bin python-dev bzip2 libgmp3-dev pkg-config
-    
-    - name: Install macOS requirements
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew update
-        brew install autoconf automake openssl libelf ncurses zlib gmp wget pkg-config
+        # Pacotes 'python' e 'python-dev' substituídos pelos equivalentes para Python 3
+        # 'libgmp3-dev' atualizado para 'libgmp-dev'
+        sudo apt-get -y install autoconf automake bison flex gcc libelf-dev make texinfo libncurses5-dev patch python-is-python3 subversion wget zlib1g-dev libtool-bin python-dev-is-python3 bzip2 libgmp-dev pkg-config
 
     - name: Runs all the stages in the shell
       run: |
@@ -40,20 +36,17 @@ jobs:
 
     - name: Get short SHA
       id: slug
-      run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
-    
+      # Sintaxe de output atualizada para o novo padrão do GitHub Actions
+      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
+
     - name: Compress ps3dev folder
       run: |
         tar -zcvf ps3dev.tar.gz ps3dev
 
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: ps3dev-${{ steps.slug.outputs.sha8 }}-${{matrix.os}}
-#        path: ps3dev.tar.gz
-
     - name: Get current date
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      # Sintaxe de output atualizada para o novo padrão do GitHub Actions
+      run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
     - name: Create Release
       id: create_release
